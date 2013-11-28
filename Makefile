@@ -1,7 +1,7 @@
-BIN=	concurrent_queue
+BIN=	tester
 
-SRCS=	concurrent_queue.c
-OBJS=	concurrent_queue.o
+SRCS=	concurrent_queue.c tester.c concurrent_queue_2locks.c
+OBJS=	concurrent_queue.o tester.o concurrent_queue_2locks.o
 
 CC=	gcc
 CFLAGS= -g 
@@ -16,8 +16,8 @@ LIBS= -pthread
 
 all:	$(BIN)
 
-lsh:	$(OBJS)
+tester:	$(OBJS)
 	$(CC) $(CFLAGS) -o $(BIN) $(OBJS) $(LIBS)
 
 clean:
-	-rm -f $(OBJS) concurrent_queue
+	-rm -f $(OBJS) concurrent_queue tester concurrent_queue_2locks

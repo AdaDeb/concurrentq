@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include<pthread.h>
-#include "concurrent_queue.h"
+#include "concurrent_queue_2locks.h"
 
 /*
  * Node data srtucture
@@ -13,15 +13,17 @@ struct Node
   struct Node* next;
 }*tail, *head, *dummy;
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t lock1 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
+
 
 // Function definitions
-bool isEmpty(struct Node *);
+bool isEmpty2(struct Node *);
 
 /*
  * Initializing of the Queue.
  */
-void initialize_queue(void){
+void initialize_queue2(void){
   head=(struct Node *)malloc(sizeof(struct Node)); 
   tail=(struct Node *)malloc(sizeof(struct Node));
   dummy=(struct Node *)malloc(sizeof(struct Node));
@@ -30,7 +32,7 @@ void initialize_queue(void){
   head->next=dummy;    	//head points to dummy
   tail->next=dummy;   	//tail points to dummy
   dummy->next=NULL;   	//dummy points to NULL
-  isEmpty(dummy);      	//Makes sure isEmpty is empty (true).
+  isEmpty2(dummy);      	//Makes sure isEmpty is empty (true).
 }
 
 
@@ -38,11 +40,11 @@ void initialize_queue(void){
 /*
  * Adds one item to the tail of the list.
  */
-void enqueue(int val)
+void enqueue2(int val)
 {
-  int loc = pthread_mutex_lock(&lock);
+  int loc = pthread_mutex_lock(&lock1);
   
-  if (loc == 0) printf("Enqeue lock aquired!\n");
+  //if (loc == 0) printf("Enqeue lock aquired!\n");
 
   
   struct Node *temp;
@@ -51,7 +53,7 @@ void enqueue(int val)
   temp1=(struct Node *)malloc(sizeof(struct Node));
   temp->Data=val;
 
-  if (isEmpty(dummy)) // if the list is Empty.
+  if (isEmpty2(dummy)) // if the list is Empty.
     {
       dummy->next = temp;			
       temp->next = NULL;	     
@@ -63,9 +65,9 @@ void enqueue(int val)
   temp->next=NULL;
   temp1->next = temp;
   
-  int locc = pthread_mutex_unlock(&lock);
+  int locc = pthread_mutex_unlock(&lock1);
   
-  if (locc == 0) printf("Enqueue lock released!\n");
+  //if (locc == 0) printf("Enqueue lock released!\n");
 
 
 
@@ -73,7 +75,7 @@ void enqueue(int val)
 
 //isEmpty: Checks if the dummmy->next is NULL returning if the list is 
 //empty or not
-bool isEmpty(struct Node *e ){
+bool isEmpty2(struct Node *e ){
   if(e->next==NULL)
     {	
       return true;
@@ -83,12 +85,12 @@ bool isEmpty(struct Node *e ){
 
 //deque pops one item from the head of the list, returning 0 if successful pops and 
 // 1 if the list is empty.
-int dequeue(int *extracted_value)
+int dequeue2(int *extracted_value)
 {  
 
-  int loc = pthread_mutex_lock(&lock);
+  int loc = pthread_mutex_lock(&lock2);
 
-  if (loc == 0) printf("Dequeue lock aquired!\n");
+  //if (loc == 0) printf("Dequeue lock aquired!\n");
   
   if(dummy->next!=NULL)
     {      
@@ -97,34 +99,34 @@ int dequeue(int *extracted_value)
       return 0;	
     }else return 1;
  
-  int locc = pthread_mutex_unlock(&lock);
-  if (locc == 0) printf("Dequeue lock released!\n");
+  int locc = pthread_mutex_unlock(&lock2);
+  //if (locc == 0) printf("Dequeue lock released!\n");
 
 
 }	
 
 //*Display: Displays the items in the linked list*//
 //*and displays empty if there is nothing in the list*//
-void display()
-{
-  struct Node *var=dummy;
-  struct Node *temp2;
-  temp2=(struct Node *)malloc(sizeof(struct Node));
+/* void display() */
+/* { */
+/*   struct Node *var=dummy; */
+/*   struct Node *temp2; */
+/*   temp2=(struct Node *)malloc(sizeof(struct Node)); */
   
-  if(var->next!=NULL)			// Checks if list is not empty.
-    {
-      printf("\nElements are as:  ");
+/*   if(var->next!=NULL)			// Checks if list is not empty. */
+/*     { */
+/*       printf("\nElements are as:  "); */
       
-      while(var->next!=NULL)
-        {
-	  temp2 = var->next;                
-	  printf("\t%d",temp2->Data);
-	  var=var->next;			
-        }
-      printf("\n");
-    }else
-    printf("\nQueue is Empty");
-}
+/*       while(var->next!=NULL) */
+/*         { */
+/* 	  temp2 = var->next;                 */
+/* 	  printf("\t%d",temp2->Data); */
+/* 	  var=var->next;			 */
+/*         } */
+/*       printf("\n"); */
+/*     }else */
+/*     printf("\nQueue is Empty"); */
+/* } */
 
 /* int main() */
 /* { */
